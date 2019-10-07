@@ -116,6 +116,10 @@ app.post('/getPDf', (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.json({msg: __dirname});
+})
+
 //Upload The Test Questions And Answers To Database
 app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
   const title = req.params.title;
