@@ -25,8 +25,10 @@ app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
+app.use('/pdf', express.static(__dirname + '/pathToPDF'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(express.json()).use(express.urlencoded())
 
 //BodyParser MiddleWares
 app.use(bodyParser.urlencoded({extended: false}));
