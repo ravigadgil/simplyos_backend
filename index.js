@@ -179,7 +179,24 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
       }
     });
   });
-})
+});
+
+app.get('/search/:query', (req, res) => {
+  const query = req.params.query;
+  Test.find({}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      let filteredData = []
+      data.forEach(test => {
+        if(test.title.toLowerCase().indexOf(query) != -1) {
+          filteredData.push(test);
+        }
+      });
+      res.json(filteredData);
+    }
+  });
+});
 
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
