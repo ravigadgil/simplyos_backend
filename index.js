@@ -182,7 +182,7 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
 });
 
 app.get('/search/:query', (req, res) => {
-  const query = req.params.query;
+  const query = req.params.query.toLocaleLowerCase();
   Test.find({}, (err, data) => {
     if(err) {
       res.json(err);
