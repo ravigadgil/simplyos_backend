@@ -34,6 +34,14 @@ app.use(express.json()).use(express.urlencoded())
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+//Shuffle Array
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 //Get Categories
 app.get('/categories', (req, res) => {
   Category.find({}, (err, data) => {
@@ -81,6 +89,7 @@ app.get('/test/:id', (req, res) => {
   });
 });
 
+
 //Add Category
 app.post('/category/add/:cat_name', (req, res) => {
   const category_name = req.params.cat_name;
@@ -118,10 +127,6 @@ app.post('/getPDf', (req, res) => {
   }
 });
 
-app.get('/', (req, res) => {
-  res.json({msg: __dirname});
-})
-
 //Upload The Test Questions And Answers To Database
 app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
   const title = req.params.title;
@@ -131,6 +136,7 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
   pdf(dataBuffer).then(function(data) {
     //This split every question(wich starts from 1 because first is intro shit)
     const dataArray = data.text.split("QUESTION");
+    shuffle(dataArray);
     const answers = [];
     const questions = [];
     for(let i = 1; i < dataArray.length; i++) {
