@@ -158,7 +158,8 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
       let myData = dataArray[i].split('\n');
       
       //Filter Headers And Footers
-      myData = myData.filter(data => !data.includes('ActualTests.com') && !data.includes('Practice Exam') && !data.includes('Pass Any Exam. Any Time'))
+      myData = myData.filter(data => !data.includes('ActualTests.com') && !data.includes('Practice Exam') && !data.includes('Pass Any Exam. Any Time') &&
+      !data.includes('Explanation:'))
 
       //This is the whole answer line
       let answerLine = '';
