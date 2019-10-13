@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
+const multer = require('multer');
 const app = express();
 const formidable = require('formidable');
 const pdf = require('pdf-parse');
@@ -33,6 +34,19 @@ app.use(express.json()).use(express.urlencoded())
 //BodyParser MiddleWares
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+
+//SET STORAGE
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + ".pdf")
+  }
+})
+ 
+var upload = multer({ storage: storage })
 
 //Shuffle Array
 function shuffle(array) {
@@ -203,6 +217,17 @@ app.get('/search/:query', (req, res) => {
     }
   });
 });
+
+app.post('/upload', upload.single('avatar'), (req, res, next) => {
+  const file = req.file
+  if (!file) {
+    const error = new Error('Please upload a file')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+    res.send(file)
+  
+})
 
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
