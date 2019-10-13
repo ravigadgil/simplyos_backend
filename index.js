@@ -237,13 +237,11 @@ app.post('/deleteCategory/:id', (req, res) => {
 });
 
 app.post('/deleteTest/:id', (req,res) => {
-  app.post('/deleteCategory/:id', (req, res) => {
-    Test.remove({_id: req.params.id}, (err) => {
-      if(err)
-        res.json(err);
-      res.json({msg: "Deleted"});
-    })
-  });
+  Test.remove({_id: req.params.id}, (err) => {
+    if(err)
+      res.json(err);
+    res.json({msg: "Deleted"});
+  })
 });
 
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
