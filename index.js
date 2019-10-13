@@ -226,8 +226,25 @@ app.post('/upload', upload.single('avatar'), (req, res, next) => {
     return next(error)
   }
     res.send(file)
-  
-})
+});
+
+app.post('/deleteCategory/:id', (req, res) => {
+  Category.remove({_id: req.params.id}, (err) => {
+    if(err)
+      res.json(err);
+    res.json({msg: "Deleted"});
+  })
+});
+
+app.post('/deleteTest/:id', (req,res) => {
+  app.post('/deleteCategory/:id', (req, res) => {
+    Test.remove({_id: req.params.id}, (err) => {
+      if(err)
+        res.json(err);
+      res.json({msg: "Deleted"});
+    })
+  });
+});
 
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
