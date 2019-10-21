@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const PORT = process.env.PORT || 5000;
 
 //Database
-mongoose.connect('mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority');
+mongoose.connect('mongodb://localhost/simplyopensource');
 let db = mongoose.connection;
 db.on("error", (err) => console.log(err));
 db.once('open', () => console.log('Connected to MongoDB'));
