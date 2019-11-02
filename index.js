@@ -332,5 +332,17 @@ app.get('/users/title/:id', (req, res) => {
   });
 });
 
+//Update Profile
+app.post('/users/update/:username/:certifications/:qualifications/:organization', (req, res) => {
+  User.update({username: req.params.username}, {username: req.params.username, certifications: req.params.certifications,
+    organization: req.params.organization, qualifications: req.params.qualifications}, (err) => {
+      if(err) {
+        res.json(err);
+      } else {
+        res.json({msg: "Updated"});
+      }
+    })
+}) 
+
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
