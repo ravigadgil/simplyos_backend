@@ -306,14 +306,18 @@ app.post('/users/addTest/:user/:test_id', (req, res) => {
     if(err) {
       res.json(err);
     } else {
-      data.tests.unshift(req.params.test_id);
-      User.update({username: req.params.user}, {tests: data.tests}, (err) => {
-        if(err) {
-          res.json(err);
-        } else {
-          res.json({msg: "Updated"});
-        }
-      })
+      if(data.tests.includes(req.params.test_id)) {
+        res.json({msg: "Updated"});
+      } else {
+        data.tests.unshift(req.params.test_id);
+        User.update({username: req.params.user}, {tests: data.tests}, (err) => {
+          if(err) {
+            res.json(err);
+          } else {
+            res.json({msg: "Updated"});
+          }
+        })
+      }
     }
   })
 });
