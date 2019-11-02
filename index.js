@@ -9,8 +9,10 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 5000;
 
+//mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority
+
 //Database
-mongoose.connect('mongodb://localhost/simplyopensource');
+mongoose.connect('mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority');
 let db = mongoose.connection;
 db.on("error", (err) => console.log(err));
 db.once('open', () => console.log('Connected to MongoDB'));
@@ -18,6 +20,7 @@ db.once('open', () => console.log('Connected to MongoDB'));
 //Models
 let Category = require('./models/Category');
 let Test = require('./models/Test');
+let User = require('./models/User');
 
 //API MiddleWares
 app.use(function (req, res, next) {
@@ -243,6 +246,86 @@ app.post('/deleteTest/:id', (req,res) => {
       res.json(err);
     res.json({msg: "Deleted"});
   })
+});
+
+//Get Users
+app.get('/users', (req, res) => {
+  User.find({}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json(data);
+    }
+  })
+});
+
+//Add Users
+app.post('/users/:username/:email/:pass/:certifications/:qualifications/:organization', (req, res) => {
+  let user = new User();
+  user.username = req.params.username;
+  user.password = req.params.pass;
+  user.tests = [];
+  user.email = req.params.email;
+  user.certifications = req.params.certifications;
+  user.qualifications = req.params.qualifications;
+  user.organization = req.params.organization;
+  user.save(err => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json({msg: "Added"});
+    }
+  });
+});
+
+//Delete Users
+app.post('/users/delete/:id', (req, res) => {
+  User.remove({_id: req.params.id}, (err) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json({msg: "Deleted"});
+    }
+  })
+});
+
+//Get Single User
+app.get('/users/:username', (req, res) => {
+  User.findOne({username: req.params.username}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json(data);
+    }
+  })
+});
+
+//Add Tests To The User
+app.post('/users/addTest/:user/:test_id', (req, res) => {
+  User.findOne({username: req.params.user}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      data.tests.unshift(req.params.test_id);
+      User.update({username: req.params.user}, {tests: data.tests}, (err) => {
+        if(err) {
+          res.json(err);
+        } else {
+          res.json({msg: "Updated"});
+        }
+      })
+    }
+  })
+});
+
+//Get Only Test Title
+app.get('/users/title/:id', (req, res) => {
+  Test.findOne({_id: req.params.id}, (err, data) => {
+    if(err) 
+      res.json(err);
+    else
+      res.json({title: data.title});
+  });
 });
 
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
