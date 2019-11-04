@@ -22,6 +22,7 @@ let Category = require('./models/Category');
 let Test = require('./models/Test');
 let User = require('./models/User');
 let Comment = require('./models/Comment');
+let Review = require('./models/Review');
 
 //API MiddleWares
 app.use(function (req, res, next) {
@@ -367,7 +368,17 @@ app.post('/tests/review/:review/:id/:user_id', (req, res) => {
                 if(err) {
                   res.json(err);
                 } else {
-                  res.json({msg: "Updated"})
+                  let review = new Review();
+                  review.review = parseInt(req.params.id);
+                  review.user_id = req.params.user_id;
+                  review.post_id = req.params.id;
+                  review.save(err => {
+                    if(err) {
+                      res.json(err);
+                    } else {
+                      res.json({msg: "Updated"})
+                    }
+                  })
                 }
               })
             }
@@ -377,6 +388,17 @@ app.post('/tests/review/:review/:id/:user_id', (req, res) => {
     }
   })
 })
+
+//Get Reviews Of A User
+app.get('/reviews/user/:user_id', (req, res) => {
+  Review.find({user_id: req.params.user_id}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else { 
+      res.json(data);
+    }
+  })
+});
 
 //Get All Comments
 app.get('/comments', (req, res) => {
