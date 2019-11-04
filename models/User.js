@@ -28,6 +28,10 @@ let userSchema = mongoose.Schema({
     tests: {
         type: Array,
         required: true
+    },
+    reviews: {
+        type: Array,
+        required: true
     }
   });
   let User = module.exports = mongoose.model('User', userSchema);

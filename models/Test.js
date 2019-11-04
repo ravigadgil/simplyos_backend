@@ -16,6 +16,14 @@ let testSchema = mongoose.Schema({
   category_id: {
     type: String,
     required: true
+  },
+  reviews_length: {
+    type: Number,
+    required: true,
+  },
+  reviews_sum: {
+    type: Number,
+    required: true
   }
 });
 let Test = module.exports = mongoose.model('Test', testSchema);

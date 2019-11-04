@@ -21,6 +21,7 @@ db.once('open', () => console.log('Connected to MongoDB'));
 let Category = require('./models/Category');
 let Test = require('./models/Test');
 let User = require('./models/User');
+let Comment = require('./models/Comment');
 
 //API MiddleWares
 app.use(function (req, res, next) {
@@ -147,7 +148,9 @@ app.post('/getPDf', (req, res) => {
 //Upload The Test Questions And Answers To Database
 app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
   const title = req.params.title;
-  const pdfName = req.params.pdfName;
+  const footer = '"Pass Any Exam. Any Time." - www.actualtests.com';
+  const header = 'Cisco 200-125 Exam';
+  const pdfName = 'try6';
   const cat_id = req.params.cat_id;
   let dataBuffer = fs.readFileSync(`./${pdfName}.pdf`)
   pdf(dataBuffer).then(function(data) {
@@ -158,11 +161,12 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
     const questions = [];
     for(let i = 1; i < dataArray.length; i++) {
       //This is every line of a question
-      let myData = dataArray[i].split('\n');
+      let myData = dataArray[i].split('Explanation:')[0];
+      myData = myData.split('\n');
       
       //Filter Headers And Footers
-      myData = myData.filter(data => !data.includes('ActualTests.com') && !data.includes('Practice Exam') && !data.includes('Pass Any Exam. Any Time') &&
-      !data.includes('Explanation:'))
+      myData = myData.filter(data => !data.includes(header) && !data.includes('ActualTests.com') && !data.includes('Practice Exam') && !data.includes('Pass Any Exam. Any Time') &&
+      !data.includes('Explanation:') && !data.includes(footer))
 
       //This is the whole answer line
       let answerLine = '';
@@ -176,7 +180,7 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
       const answer = answerLine.split(": ")[1];
 
       //This is the question lines without answer And alternatives
-      let questionLines = myData.filter(line => !line.includes('Answer: ') && !line.includes('NO:'));
+      let questionLines = myData.filter(line => !line.includes('Reference') && !line.includes('Answer: ') && !line.includes('NO:'));
       let questionOutput = '';
       questionLines.forEach(question => {
         if(question == ' ') {
@@ -186,7 +190,7 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
         }
       })
       questions.push(questionOutput);
-      answers.push(answer)
+      answers.push(answer);
     }   
     let test = new Test();
     test.questions = questions;
@@ -342,7 +346,85 @@ app.post('/users/update/:username/:certifications/:qualifications/:organization'
         res.json({msg: "Updated"});
       }
     })
-}) 
+});
+
+//Update Test Review
+app.post('/tests/review/:review/:id/:user_id', (req, res) => {
+  Test.findOne({_id: req.params.id}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      Test.updateOne({_id: req.params.id}, {reviews_length: parseInt(data.reviews_length) + 1, reviews_sum: data.reviews_sum + parseInt(req.params.review)}, err => {
+        if(err) {
+          res.json(err);
+        } else {
+          User.findOne({_id: req.params.user_id}, (usererr, userdata) => {
+            if(err) {
+              res.json(usererr) 
+            } else {
+              userdata.reviews.push(req.params.id);
+              User.updateOne({_id: req.params.user_id}, {reviews: userdata.reviews}, err => {
+                if(err) {
+                  res.json(err);
+                } else {
+                  res.json({msg: "Updated"})
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
+//Get All Comments
+app.get('/comments', (req, res) => {
+  Comment.find({}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json(data);
+    }
+  })
+})
+
+//Get all comments from a user
+app.get('/comments/user/:user_id', (req, res) => {
+  Comment.find({user_id: req.params.user_id}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json(data);
+    }
+  })
+})
+
+//Get all comments from a post
+app.get('/comments/post/:post_id', (req, res) => {
+  Comment.find({post_id: req.params.post_id}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json(data);
+    }
+  })
+})
+
+//Add Reviews As Comments
+app.post('/comments/add/:comment/:user_id/:post_id', (req, res) => {
+  let comment = new Comment();
+  comment.comment = req.params.comment;
+  comment.user_id = req.params.user_id;
+  comment.post_id = req.params.post_id;
+  comment.save(err => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json({msg: "Added"});
+    }
+  })
+});
 
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
