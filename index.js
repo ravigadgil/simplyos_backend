@@ -369,7 +369,7 @@ app.post('/tests/review/:review/:id/:user_id', (req, res) => {
                   res.json(err);
                 } else {
                   let review = new Review();
-                  review.review = parseInt(req.params.id);
+                  review.review = parseInt(req.params.review);
                   review.user_id = req.params.user_id;
                   review.post_id = req.params.id;
                   review.save(err => {
