@@ -402,7 +402,7 @@ app.get('/reviews/user/:user_id', (req, res) => {
 
 //Get Reviews Of A User of a test
 app.get('/reviews/user/:user_id/:test_id', (req, res) => {
-  Review.find({user_id: req.params.user_id, post_id: req.params.user_id, post_id}, (err, data) => {
+  Review.find({user_id: req.params.user_id, post_id: req.params.test_id}, (err, data) => {
     if(err) {
       res.json(err);
     } else { 
