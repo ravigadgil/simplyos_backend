@@ -333,7 +333,7 @@ app.get('/users/title/:id', (req, res) => {
     if(err) 
       res.json(err);
     else
-      res.json({title: data.title});
+      res.json({title: data.title, id: req.params.id});
   });
 });
 
