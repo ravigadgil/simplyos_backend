@@ -278,7 +278,7 @@ app.post('/users/:username/:email/:pass/:certifications/:qualifications/:organiz
     if(err) {
       res.json(err);
     } else {
-      res.json({msg: "Added"});
+      res.json(user);
     }
   });
 });
