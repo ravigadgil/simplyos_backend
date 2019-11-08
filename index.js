@@ -460,5 +460,16 @@ app.post('/comments/add/:comment/:user_id/:post_id', (req, res) => {
   })
 });
 
+//Update User Review
+app.post('/reviews/update/user/:user_id/:post_id/:review', (req, res) => {
+  Review.updateOne({user_id: req.params.user_id, post_id: req.params.post_id}, {review: req.params.review}, (err) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json({msg: 'Updated'})
+    }
+  })
+})
+
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
