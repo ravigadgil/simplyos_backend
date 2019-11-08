@@ -411,6 +411,17 @@ app.get('/reviews/user/:user_id/:test_id', (req, res) => {
   })
 });
 
+//Get Review By Review ID
+app.get('/review/reviewId/:r_id', (req, res) => {
+  Review.findOne({_id: req.params.r_id}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json(data);
+    }
+  })
+})
+
 
 //Get All Comments
 app.get('/comments', (req, res) => {
@@ -461,8 +472,8 @@ app.post('/comments/add/:comment/:user_id/:post_id', (req, res) => {
 });
 
 //Update User Review
-app.post('/reviews/update/user/:user_id/:post_id/:review', (req, res) => {
-  Review.updateOne({user_id: req.params.user_id, post_id: req.params.post_id}, {review: req.params.review}, (err) => {
+app.post('/reviews/update/:id/:review', (req, res) => {
+  Review.updateOne({_id: req.params.id}, {review: req.params.review}, (err) => {
     if(err) {
       res.json(err);
     } else {
