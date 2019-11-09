@@ -315,7 +315,7 @@ app.post('/users/addTest/:user/:test_id', (req, res) => {
         res.json({msg: "Updated"});
       } else {
         data.tests.unshift(req.params.test_id);
-        User.update({username: req.params.user}, {tests: data.tests}, (err) => {
+        User.update({_id: req.params.user}, {tests: data.tests}, (err) => {
           if(err) {
             res.json(err);
           } else {
