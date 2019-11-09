@@ -498,8 +498,8 @@ app.post('/reviews/update/:id/:review', (req, res) => {
 })
 
 //Update Test
-app.post('/tests/update/:post_id', (req, res) => {
-  Test.updateOne({_id: req.params.post_id}, {updated: true, date: new Date()}, (err) => {
+app.post('/tests/update/:post_id/:title', (req, res) => {
+  Test.updateOne({_id: req.params.post_id}, {updated: true, date: new Date(), title: req.params.title}, (err) => {
     if(err) {
       res.json(err);
     } else {
