@@ -24,6 +24,10 @@ let testSchema = mongoose.Schema({
   reviews_sum: {
     type: Number,
     required: true
+  },
+  date: {
+    type: Date,
+    required: true
   }
 });
 let Test = module.exports = mongoose.model('Test', testSchema);
