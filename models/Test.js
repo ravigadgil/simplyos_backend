@@ -28,6 +28,9 @@ let testSchema = mongoose.Schema({
   date: {
     type: Date,
     required: true
+  },
+  updated: {
+    type: Boolean
   }
 });
 let Test = module.exports = mongoose.model('Test', testSchema);
