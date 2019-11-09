@@ -159,11 +159,11 @@ app.post('/getPDf', (req, res) => {
 });
 
 //Upload The Test Questions And Answers To Database
-app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
+app.post('/tests/add/:title/:pdfName/:cat_id/:header', (req, res) => {
   const title = req.params.title;
   const footer = '"Pass Any Exam. Any Time." - www.actualtests.com';
-  const header = 'Cisco 200-125 Exam';
-  const pdfName = 'try6';
+  const header = req.param.header;
+  const pdfName = req.params.pdfName;
   const cat_id = req.params.cat_id;
   let dataBuffer = fs.readFileSync(`./${pdfName}.pdf`)
   pdf(dataBuffer).then(function(data) {
@@ -178,8 +178,8 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
       myData = myData.split('\n');
       
       //Filter Headers And Footers
-      myData = myData.filter(data => !data.includes(header) && !data.includes('ActualTests.com') && !data.includes('Practice Exam') && !data.includes('Pass Any Exam. Any Time') &&
-      !data.includes('Explanation:') && !data.includes(footer))
+      myData = myData.filter(data => !data.includes(header) && !data.includes('Click and drag') && !data.includes('ActualTests.com') && !data.includes('Practice Exam') && !data.includes('Exam') && !data.includes('Pass Any Exam. Any Time') &&
+      !data.includes('Explanation:') && !data.includes(footer) && !data.includes(req.params.title))
 
       //This is the whole answer line
       let answerLine = '';
@@ -210,6 +210,9 @@ app.post('/tests/add/:title/:pdfName/:cat_id', (req, res) => {
     test.answers = answers;
     test.category_id = cat_id;
     test.title = title;
+    test.date = new Date();
+    test.reviews_sum = 0;
+    test.reviews_length = 0;
     test.save(err => {
       if(err) { 
         console.log(err);
@@ -490,6 +493,17 @@ app.post('/reviews/update/:id/:review', (req, res) => {
       res.json(err);
     } else {
       res.json({msg: 'Updated'})
+    }
+  })
+})
+
+//Update Test
+app.post('/tests/update/:post_id', (req, res) => {
+  Test.updateOne({_id: req.params.post_id}, {updated: true, date: new Date()}, (err) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json({msg: "Updated"})
     }
   })
 })
