@@ -96,6 +96,18 @@ app.get('/tests/category/:id/:limit', (req, res) => {
   }).limit(parseInt(req.params.limit)).sort({date: -1})
 });
 
+//Get All Tests Of A Category
+app.get('/tests/category/:id/', (req, res) => {
+  const id = req.params.id;
+  Test.find({category_id: id}, (err, data) => {
+    if(err) {
+      res.json('Error');
+    } else {
+      res.json(data);
+    }
+  }).sort({date: -1})
+});
+
 //Get Test
 app.get('/test/:id', (req, res) => {
   const id = req.params.id;
