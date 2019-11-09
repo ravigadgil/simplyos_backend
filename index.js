@@ -296,7 +296,7 @@ app.post('/users/delete/:id', (req, res) => {
 
 //Get Single User
 app.get('/users/:username', (req, res) => {
-  User.findOne({username: req.params.username}, (err, data) => {
+  User.findOne({_id: req.params.username}, (err, data) => {
     if(err) {
       res.json(err);
     } else {
@@ -307,7 +307,7 @@ app.get('/users/:username', (req, res) => {
 
 //Add Tests To The User
 app.post('/users/addTest/:user/:test_id', (req, res) => {
-  User.findOne({username: req.params.user}, (err, data) => {
+  User.findOne({_id: req.params.user}, (err, data) => {
     if(err) {
       res.json(err);
     } else {
@@ -338,8 +338,8 @@ app.get('/users/title/:id', (req, res) => {
 });
 
 //Update Profile
-app.post('/users/update/:username/:certifications/:qualifications/:organization', (req, res) => {
-  User.update({username: req.params.username}, {username: req.params.username, certifications: req.params.certifications,
+app.post('/users/update/:user_id/:certifications/:qualifications/:organization', (req, res) => {
+  User.update({_id: req.params.user_id}, {username: req.params.username, certifications: req.params.certifications,
     organization: req.params.organization, qualifications: req.params.qualifications}, (err) => {
       if(err) {
         res.json(err);
