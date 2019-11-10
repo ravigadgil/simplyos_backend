@@ -520,5 +520,16 @@ app.post('/tests/update/:post_id/:title', (req, res) => {
   })
 })
 
+//Get user by username
+app.get('/user/username/:username', (req, res) => {
+  User.findOne({username: req.params.username}, (err, data) => {
+    if(err) {
+      res.json(err)
+    } else {
+      res.json(data)
+    }
+  })
+})
+
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
