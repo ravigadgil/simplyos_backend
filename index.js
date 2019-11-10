@@ -348,12 +348,16 @@ app.post('/users/addTest/:user/:test_id', (req, res) => {
 
 //Get Only Test Title
 app.get('/users/title/:id', (req, res) => {
-  Test.findOne({_id: req.params.id}, (err, data) => {
-    if(err) 
-      res.json(err);
-    else
-      res.json({title: data.title, id: req.params.id});
-  });
+  try {
+    Test.findOne({_id: req.params.id}, (err, data) => {
+      if(err) 
+        res.json(err);
+      else
+        res.json({title: data.title, id: req.params.id});
+    });
+  } catch(e) {
+    res.json({msg: 'Fail'})
+  }
 });
 
 //Update Profile
