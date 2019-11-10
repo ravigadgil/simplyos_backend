@@ -311,13 +311,17 @@ app.post('/users/delete/:id', (req, res) => {
 
 //Get Single User
 app.get('/users/:username', (req, res) => {
-  User.findOne({_id: req.params.username}, (err, data) => {
-    if(err) {
-      res.json(err);
-    } else {
-      res.json(data);
-    }
-  })
+  try {
+    User.findOne({_id: req.params.username}, (err, data) => {
+      if(err) {
+        res.json(err);
+      } else {
+        res.json(data);
+      }
+    })
+  } catch(e) {
+    res.json({msg: "fail"});
+  }
 });
 
 //Add Tests To The User
