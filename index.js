@@ -353,7 +353,11 @@ app.get('/users/title/:id', (req, res) => {
       if(err) 
         res.json(err);
       else
-        res.json({title: data.title, id: req.params.id});
+        try {
+          res.json({title: data.title, id: req.params.id});
+        } catch(e) {
+          
+        }
     });
   } catch(e) {
     res.json({msg: 'Fail'})
