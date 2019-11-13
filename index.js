@@ -208,7 +208,6 @@ app.post('/tests/add/:title/:pdfName/:cat_id/:header', (req, res) => {
         answers.push(answer);
       }
     }   
-    res.json({questions, answers})
     let test = new Test();
     test.questions = questions;
     test.answers = answers;
