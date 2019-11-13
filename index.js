@@ -202,9 +202,13 @@ app.post('/tests/add/:title/:pdfName/:cat_id/:header', (req, res) => {
           questionOutput += question;
         }
       })
-      questions.push(questionOutput);
-      answers.push(answer);
+      if(answer != null && answer != undefined) {
+        console.log(answer)
+        questions.push(questionOutput);
+        answers.push(answer);
+      }
     }   
+    res.json({questions, answers})
     let test = new Test();
     test.questions = questions;
     test.answers = answers;
