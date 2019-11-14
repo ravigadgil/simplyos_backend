@@ -37,8 +37,8 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json()).use(express.urlencoded())
 
 //BodyParser MiddleWares
-app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 
 //SET STORAGE
@@ -532,6 +532,19 @@ app.get('/user/username/:username', (req, res) => {
       res.json(data)
     }
   })
+})
+
+app.post('/update/test/:id', (req, res) => {
+  const id = req.params.id;
+  if(req.body.answers !== undefined && req.body.questions !== undefined) {
+    Test.updateOne({_id: id}, {answers: req.body.answers, questions: req.body.questions}, (err) => {
+      if(err) {
+        res.json(err)
+      } else {
+        res.json({msg: 'Updated'})
+      }
+    })
+  }
 })
 
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
