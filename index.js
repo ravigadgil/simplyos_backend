@@ -534,7 +534,7 @@ app.get('/user/username/:username', (req, res) => {
   })
 })
 
-app.post('/update/test/:id', (req, res) => {
+app.put('/update/test/:id', (req, res) => {
   const id = req.params.id;
   if(req.body.answers !== undefined && req.body.questions !== undefined) {
     Test.updateOne({_id: id}, {answers: req.body.answers, questions: req.body.questions}, (err) => {
@@ -544,6 +544,8 @@ app.post('/update/test/:id', (req, res) => {
         res.json({msg: 'Updated'})
       }
     })
+  } else {
+    res.json({msg: "ERROR"})
   }
 })
 
