@@ -23,6 +23,7 @@ let Test = require('./models/Test');
 let User = require('./models/User');
 let Comment = require('./models/Comment');
 let Review = require('./models/Review');
+let QuestionWithImage = require('./models/QuestionWithImage');
 
 //API MiddleWares
 app.use(function (req, res, next) {
@@ -549,5 +550,33 @@ app.put('/update/test/:id', (req, res) => {
   }
 })
 
+app.get('/imageQuestion/:test_id', (req, res) => {
+  QuestionWithImage.find({test_id: req.params.test_id}, (err, data) => {
+    if(err) {
+      res.json(err);
+    } else {
+      res.json(data);
+    }
+  })
+})
+
+app.post('/add/imageQuestion/:test_id', (req, res) => {
+  const test_id = req.params.test_id;
+  const question = req.body.question;
+  const answer = req.body.answer;
+  const href = req.body.href;
+  const post = new QuestionWithImage();
+  post.test_id = test_id;
+  post.question = question;
+  post.answer = answer;
+  post.href = href;
+  post.save(err => {
+    if(err) {
+      res.json(err)
+    } else {
+      res.json({msg: 'Added'})
+    }
+  })
+})
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
