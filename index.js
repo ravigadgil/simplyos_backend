@@ -578,5 +578,5 @@ app.post('/add/imageQuestion/:test_id', (req, res) => {
     }
   })
 })
-app.listen(5500, () => console.log("Server Started at port: " + PORT));
+app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
