@@ -7,7 +7,7 @@ const formidable = require('formidable');
 const pdf = require('pdf-parse');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const PORT = process.env.PORT || 5501;
+const PORT = process.env.PORT || 6000;
 
 //mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority
 
@@ -578,5 +578,7 @@ app.post('/add/imageQuestion/:test_id', (req, res) => {
     }
   })
 })
+
+
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
