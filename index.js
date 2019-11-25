@@ -20,6 +20,7 @@ db.once('open', () => console.log('Connected to MongoDB'));
 //Models
 let Category = require('./models/Category');
 let Test = require('./models/Test');
+let TestDone = require('./models/TestDone');
 let User = require('./models/User');
 let Comment = require('./models/Comment');
 let Review = require('./models/Review');
@@ -351,14 +352,24 @@ app.post('/users/addTest/:user/:test_id', (req, res) => {
 });
 
 //Get Only Test Title
-app.get('/users/title/:id', (req, res) => {
+app.get('/users/title/:id/:user_id', (req, res) => {
   try {
     Test.findOne({_id: req.params.id}, (err, data) => {
       if(err) 
         res.json(err);
       else
         try {
-          res.json({title: data.title, id: req.params.id});
+          TestDone.findOne({user_id: req.params.user_id, test_id: req.params.test_id}, (err, test) => {
+            if(err) {
+              res.json(err);
+            } else {
+              try {
+                res.json({title: data.title, id: req.params.id, score: test.score});
+              } catch(e) {
+
+              }
+            }
+          })
         } catch(e) {
           
         }
