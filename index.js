@@ -7,12 +7,21 @@ const formidable = require('formidable');
 const pdf = require('pdf-parse');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser'); 
 const PORT = process.env.PORT || 5500;
 
 //mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority
 
 //Database
-mongoose.connect('mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority');
+
+console.log(process.env.NODE_ENV);
+if (process.env.NODE_ENV == 'development') {
+  mongoose.connect('mongodb://127.0.0.1:27017/simplyopensource?retryWrites=true&w=majority');
+}
+else {
+  mongoose.connect('mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority');
+
+}
 let db = mongoose.connection;
 db.on("error", (err) => console.log(err));
 db.once('open', () => console.log('Connected to MongoDB'));
@@ -123,6 +132,10 @@ app.get('/test/:id', (req, res) => {
 });
 
 
+app.get('/test1', (req, res) => {
+  console.log("test");
+
+});
 //Add Category
 app.post('/category/add/:cat_name', (req, res) => {
   const category_name = req.params.cat_name;
@@ -282,6 +295,32 @@ app.get('/users', (req, res) => {
       res.json(data);
     }
   })
+});
+
+app.post('/user/validate/', (req, res) => {
+  try {
+    User.find({'username':req.body.username, password:req.body.pass}, (err, data) => {
+     if(err) {
+       res.json(err);
+     } else {
+       console.log(data);
+       if (data.length) {
+        console.log(req.body.username);
+        //res.send('user data added to cookie'); 
+        console.log(data[0]['_id']);
+        let data_info = {'username':req.body.username, 'id':data[0]._id};
+        res.json({'login': true, 'data_info': data_info});
+        
+       }
+       else {
+        res.json({'login': false,  msg: "User Name or Password not match with our records"});
+       }
+       
+     }
+   })
+  }catch(e) {
+    res.json({msg: "fail"});
+  }
 });
 
 //Add Users
