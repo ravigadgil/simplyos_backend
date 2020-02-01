@@ -19,7 +19,7 @@ if (process.env.NODE_ENV == 'development') {
   mongoose.connect('mongodb://127.0.0.1:27017/simplyopensource?retryWrites=true&w=majority');
 }
 else {
-  mongoose.connect('mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority');
+  mongoose.connect('mongodb://127.0.0.1:27017/simplyopensource?retryWrites=true&w=majority');
 
 }
 let db = mongoose.connection;
