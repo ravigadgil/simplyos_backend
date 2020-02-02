@@ -7,20 +7,36 @@ const formidable = require('formidable');
 const pdf = require('pdf-parse');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser'); 
+
+//var localStorage = require('localStorage')
+var cache = require('memory-cache');
 const PORT = process.env.PORT || 5500;
 
 //mongodb+srv://redus:redis06122002!@cluster0-xwsm9.mongodb.net/simplyopensource?retryWrites=true&w=majority
 
 //Database
 
-console.log(process.env.NODE_ENV);
+//console.log(process.env.NODE_ENV);
+let connection;
 if (process.env.NODE_ENV == 'development') {
   mongoose.connect('mongodb://127.0.0.1:27017/simplyopensource?retryWrites=true&w=majority');
+   connection = {
+    host     : 'localhost',
+    user     : 'root',
+    password : 'root',
+    database : 'simplyos'
+  };
+  
 }
 else {
   mongoose.connect('mongodb://127.0.0.1:27017/simplyopensource?retryWrites=true&w=majority');
-
+   connection = {
+    host     : 'localhost',
+    user     : 'root',
+    password : 'root',
+    database : 'simplyos'
+  };
+  //connection.connect();
 }
 let db = mongoose.connection;
 db.on("error", (err) => console.log(err));
@@ -34,12 +50,15 @@ let User = require('./models/User');
 let Comment = require('./models/Comment');
 let Review = require('./models/Review');
 let QuestionWithImage = require('./models/QuestionWithImage');
+let MetaInfo = require('./models/MetaInfo');
+
+
 
 //API MiddleWares
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 app.use('/pdf', express.static(__dirname + '/pathToPDF'));
@@ -81,6 +100,89 @@ app.get('/categories', (req, res) => {
       res.json(data);
     }
   });
+});
+
+// Need to implement Every request should be verify with access token
+app.get('/getAccesToken/:token', (req, res) => {
+  const token = req.param.token;
+
+});
+
+app.get('/getmeta', (req, res) => {
+  const page = req.query.page;
+  console.log(page);
+  const meta = new MetaInfo();
+  let meta_info = {
+    'status': false,
+    'data' : ''
+  };
+  (async () => {
+    let key = 'meta__' + page;
+    let cachedMeta = cache.get(key);
+    if (cachedMeta) {
+      res.send( cachedMeta );
+      return
+    }
+    const result = await meta.getMetaBypage(page);
+    if (result) {
+      meta_info.status = true;
+      meta_info.data = result;
+      cache.put(key, meta_info);
+    }
+    console.log("no cache");
+    res.json(meta_info);
+    
+  })();
+});
+
+app.get('/getpages', (req, res) => {
+  
+  const meta = new MetaInfo();
+  let meta_info = {
+    'status': false,
+    'data' : ''
+  };
+  (async () => {
+    const result = await meta.getMetaAllpage();
+    if (result) {
+      console.log(result);
+      meta_info.status = true;
+      meta_info.data = result;
+    }
+    res.json(meta_info);
+    
+  })();
+});
+
+
+app.post('/postmeta', (req, res) => {
+  const meta = new MetaInfo();
+  let meta_info = {
+    'status': false,
+    'msg' : ''
+  };
+  //console.log(localStorage.getItem('username'));
+  (async () => {
+    const result = await meta.getMetaBypage(req.body.page_path);
+    if (result) {
+      let updateMeta = req.body;
+      const update = await meta.updateMeta(req.body.page_path, updateMeta);
+      if (update) {
+        meta_info.status = true;
+        meta_info.msg = 'Update the Record';
+      }
+      
+    }
+    else {
+      const insert = await meta.insertMeta(req.body);
+      if (insert) {
+        console.log("Insert Data element");
+        meta_info.status = true;
+        meta_info.msg = 'Data has been insert';
+      }
+    }
+    res.json(meta_info);
+  })();
 });
 
 //Get All Tests
