@@ -193,6 +193,9 @@ app.post('/postmeta', (req, res) => {
       if (update) {
         meta_info.status = true;
         meta_info.msg = 'Update the Record';
+        let page = req.body.page_path;
+        key = 'meta__' + page;
+        cache.del(key);
       }
       
     }
@@ -205,11 +208,7 @@ app.post('/postmeta', (req, res) => {
       }
     }
     //delete the cache
-    if (meta_info.status == true) {
-      let page = req.body.page_path;
-      key = 'meta__' + page;
-      cache.del(key);
-    }
+    
     res.json(meta_info);
   })();
 });

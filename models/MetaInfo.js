@@ -66,7 +66,8 @@ class MeatInfo {
         query,
         [data.title, data.keyword, data.meta_info, key],
         (err, result) => {
-          return err ? reject(err) : resolve(result[0]);
+          console.log(result);
+          return err ? reject(err) : resolve(result.changedRows);
         }
       );
     });
