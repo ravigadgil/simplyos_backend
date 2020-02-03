@@ -181,6 +181,12 @@ app.post('/postmeta', (req, res) => {
         meta_info.msg = 'Data has been insert';
       }
     }
+    //delete the cache
+    if (meta_info.status == true) {
+      let page = req.body.page_path;
+      key = 'meta__' + page;
+      cache.del(key);
+    }
     res.json(meta_info);
   })();
 });
