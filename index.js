@@ -120,6 +120,7 @@ app.get('/getmeta', (req, res) => {
     let key = 'meta__' + page;
     let cachedMeta = cache.get(key);
     if (cachedMeta) {
+      console.log("cache data..")
       res.send( cachedMeta );
       return
     }
@@ -145,12 +146,34 @@ app.get('/getpages', (req, res) => {
   (async () => {
     const result = await meta.getMetaAllpage();
     if (result) {
-      console.log(result);
       meta_info.status = true;
       meta_info.data = result;
     }
     res.json(meta_info);
     
+  })();
+});
+
+app.delete('/delete-meta/:id', (req, res) => {
+  const id = req.params.id;
+  let key = 'meta__' + req.body.path;
+  const meta = new MetaInfo();
+  let meta_info = {
+    'status': false,
+    'data' : ''
+  };
+  (async () => {
+    const result = await meta.deleteMeta(id);
+    console.log(result);
+    if (result) {
+      meta_info.status = true;
+      meta_info.data = 'Delete Record';
+      let cachedMeta = cache.get(key);
+      if (cachedMeta) {
+        cache.del(key);
+      }
+    }
+    res.json(meta_info);
   })();
 });
 
