@@ -7,6 +7,8 @@ const formidable = require('formidable');
 const pdf = require('pdf-parse');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const config = require('./config');
+
 
 //var localStorage = require('localStorage')
 var cache = require('memory-cache');
@@ -91,8 +93,11 @@ function shuffle(array) {
   }
 }
 
+
+
 //Get Categories
 app.get('/categories', (req, res) => {
+  console.log('Cs page visited!');
   Category.find({}, (err, data) => {
     if(err) {
       res.json('Error');
@@ -110,7 +115,7 @@ app.get('/getAccesToken/:token', (req, res) => {
 
 app.get('/getmeta', (req, res) => {
   const page = req.query.page;
-  console.log(page);
+  console.log(__dirname);
   const meta = new MetaInfo();
   let meta_info = {
     'status': false,
@@ -119,10 +124,16 @@ app.get('/getmeta', (req, res) => {
   (async () => {
     let key = 'meta__' + page;
     let cachedMeta = cache.get(key);
+    const folder = config.reactFolder;
+    const filePath = path.resolve(folder, './build', 'index.html');
+    console.log(filePath);
     if (cachedMeta) {
-      console.log("cache data..")
-      res.send( cachedMeta );
-      return
+      console.log(cachedMeta);
+      dataInfo = dataInfo.replace(/\$OG_TITLE/g, cachedMeta.data.title);
+      let description = JSON.parse(String.fromCharCode.apply(null, new Uint16Array(cachedMeta.data.meta_info)));
+      resultMeta = dataInfo.replace(/\$OG_DESCRIPTION/g, description.des) ;
+      res.send( resultMeta );
+      //return
     }
     const result = await meta.getMetaBypage(page);
     if (result) {
@@ -130,8 +141,21 @@ app.get('/getmeta', (req, res) => {
       meta_info.data = result;
       cache.put(key, meta_info);
     }
-    console.log("no cache");
-    res.json(meta_info);
+    
+    fs.readFile(filePath, 'utf8', function (err,dataInfo) {
+      if (err) {
+        return console.log(err);
+      }
+      console.log(meta_info.data);
+      let description = JSON.parse(String.fromCharCode.apply(null, new Uint16Array(meta_info.data.meta_info)));
+      console.log(description);
+      dataInfo = dataInfo.replace(/\$OG_TITLE/g, meta_info.data.title);
+      resultMeta = dataInfo.replace(/\$OG_DESCRIPTION/g, description.des) ;
+      //result = data.replace(/\$OG_IMAGE/g, 'https://i.imgur.com/V7irMl8.png');
+      res.send(resultMeta);
+    });
+    console.log("no cache", filePath);
+    //res.json(meta_info);
     
   })();
 });
