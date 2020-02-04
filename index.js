@@ -124,38 +124,35 @@ app.get('/getmeta', (req, res) => {
   (async () => {
     let key = 'meta__' + page;
     let cachedMeta = cache.get(key);
+    if (cachedMeta) {
+      meta_info = cachedMeta;
+    }
+    else {
+      const result = await meta.getMetaBypage(page);
+      if (result) {
+        meta_info.status = true;
+        meta_info.data = result;
+        cache.put(key, meta_info);
+      }
+      else {
+        res.send(meta_info);
+      }
+    }
     const folder = config.reactFolder;
     const filePath = path.resolve(folder, './build', 'index.html');
-    console.log(filePath);
-    if (cachedMeta) {
-      console.log(cachedMeta);
-      dataInfo = dataInfo.replace(/\$OG_TITLE/g, cachedMeta.data.title);
-      let description = JSON.parse(String.fromCharCode.apply(null, new Uint16Array(cachedMeta.data.meta_info)));
-      resultMeta = dataInfo.replace(/\$OG_DESCRIPTION/g, description.des) ;
-      res.send( resultMeta );
-      //return
-    }
-    const result = await meta.getMetaBypage(page);
-    if (result) {
-      meta_info.status = true;
-      meta_info.data = result;
-      cache.put(key, meta_info);
-    }
-    
     fs.readFile(filePath, 'utf8', function (err,dataInfo) {
       if (err) {
         return console.log(err);
       }
-      console.log(meta_info.data);
+      console.log(filePath);
       let description = JSON.parse(String.fromCharCode.apply(null, new Uint16Array(meta_info.data.meta_info)));
       console.log(description);
       dataInfo = dataInfo.replace(/\$OG_TITLE/g, meta_info.data.title);
       resultMeta = dataInfo.replace(/\$OG_DESCRIPTION/g, description.des) ;
       //result = data.replace(/\$OG_IMAGE/g, 'https://i.imgur.com/V7irMl8.png');
+      console.log(resultMeta);
       res.send(resultMeta);
     });
-    console.log("no cache", filePath);
-    //res.json(meta_info);
     
   })();
 });
@@ -783,6 +780,14 @@ app.post('/add/imageQuestion/:test_id', (req, res) => {
   })
 })
 
+const folder = config.reactFolder;
+const filePath = path.resolve(folder, './build', 'index.html');
+app.use(express.static(path.resolve(folder, './build')));
+
+app.get('*', function(request, response) {
+  const filePath = path.resolve(filePath);
+  response.sendFile(filePath);
+});
 
 app.listen(PORT, () => console.log("Server Started at port: " + PORT));
  
