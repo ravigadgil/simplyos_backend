@@ -113,9 +113,31 @@ app.get('/api/getAccesToken/:token', (req, res) => {
 });
 
 app.get('/api/getmeta', (req, res) => {
-  
+  const page = req.query.page;
+  console.log(page);
+  const meta = new MetaInfo();
+  let meta_info = {
+    'status': false,
+    'data' : ''
+  };
+  (async () => {
+    let key = 'meta__' + page;
+    let cachedMeta = cache.get(key);
+    if (cachedMeta) {
+      console.log("cache data..")
+      res.send( cachedMeta );
+      return
+    }
+    const result = await meta.getMetaBypage(page);
+    if (result) {
+      meta_info.status = true;
+      meta_info.data = result;
+      cache.put(key, meta_info);
+    }
+    console.log("no cache");
+    res.json(meta_info); 
     
- // })();
+ })();
 });
 
 app.get('/api/getpages', (req, res) => {
