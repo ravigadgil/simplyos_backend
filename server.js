@@ -7,7 +7,7 @@ const formidable = require('formidable');
 const pdf = require('pdf-parse');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const config = require('./config');
+let cache = require('memory-cache');
 const helper = require('./_helper/helper');
 //var localStorage = require('localStorage')
 
