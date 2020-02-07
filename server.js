@@ -786,6 +786,7 @@ let routesPath = [
   '/admin/delete/'
 ];
 app.get(routesPath, function(request, response) {
+  console.log(request.originalUrl);
   const filePath = path.resolve(__dirname, './build', 'index.html');
   fs.readFile(filePath, 'utf8', function (err, data) {
     if (err) {

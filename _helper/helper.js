@@ -13,7 +13,7 @@ module.exports = {
   },
 
   async modifyMetaInfo(filePath, page) {
-    console.log("Path", filePath, page);
+    
 
     let meta = await getMetaData(page);
     await new Promise(resolve => setTimeout(resolve, 1000)); // 3 sec
@@ -23,6 +23,7 @@ module.exports = {
 
 const getMetaData = (page) => {
   const meta = new MetaInfo();
+  page = (!page) ? '/' : page;
   let meta_info = {
     'status': false,
     'data': {
@@ -39,8 +40,6 @@ const getMetaData = (page) => {
     return cachedMeta
   }
   return meta.getMetaBypage(page).then(function (result) {
-    console.log("dd", page);
-    console.log(result);
     if (result !== undefined) {
       meta_info.status = true;
       meta_info.data = result;
