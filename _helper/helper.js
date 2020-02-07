@@ -27,10 +27,10 @@ const getMetaData = (page) => {
   let meta_info = {
     'status': false,
     'data': {
-      'title': 'Home Page',
-      'keyword': 'Home Page',
+      'title': 'SimplyOpenSource: Prepare online for all major Certification Exams',
+      'keyword': 'SimplyOpenSource, Simply open source, certification exams, certification, exam, exam engine, Certification Questions, testing engine, exam simulator',
       'meta_info': {
-        'des': 'Home Page'
+        'des': 'SimplyOpenSource offers free access to IT training Exams and Certifications in Exam Engine formats to help individuals prepare for professional certification exams'
       }
     }
   };
